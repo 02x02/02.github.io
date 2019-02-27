@@ -1,0 +1,38 @@
+/*@import url('https://fonts.googleapis.com/css?family=Noto+Sans+KR');*/
+@font-face{
+font-family: "font1";
+src:url(./font/CoreGTE3.woff) format("woff");}
+@font-face{
+font-family: "font2";
+src:url(./font/CoreGTE4.woff) format("woff");}
+@font-face{
+font-family: "font3";
+src:url(./font/CoreGTE6.woff) format("woff");}
+@font-face{
+font-family: "font4";
+src:url(./font/MASQUE_.ttf) format("ttf");
+src:url(./font/MASQUE_.eot) format("emeddedopentype");
+src:url(./font/MASQUE_.woff) format("woff");}
+@font-face{
+font-family: "font5";
+src:url(./font/THEFACESHOP INKLIPQUID.ttf) format("ttf");
+src:url(./font/THEFACESHOP INKLIPQUID.eot) format("emeddedopentype");
+src:url(./font/THEFACESHOP INKLIPQUID.woff) format("woff");}
+
+*{margin: 0; padding: 0;}
+html,body{width: 100%;height: 100%;overflow-x: hidden;font-family: "font5";}
+img{border: none;}
+ul,li{list-style-type: none;}
+a{text-decoration: none;color: #000;}
+img{border:none; }
+input{outline:none;}
+
+
+/* 레이아웃 */
+
+#wrap{width: 100%;height: 100%;}
+.page{width: 100%;height: 100%;position: relative;}
+#hd{width: 100%;height: 146px;position: fixed;top: 0;left: 0;z-index: 10;}
+.top_menu{height: 48px;background-color: #ececec;}
+.top_menu li{float: left;}
+.top_menu li a{display: block;}
