@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>대전 대덕 경찰서</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="shortcut icon" href="./img/favicon.png">
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function(){
+	//toggle on/off
+	$("#toggle_menu").hide();
+
+	$("#toggle").click(function(){
+		$("#toggle_menu").slideDown("slow");
+	});
+
+	$("#toggle_close").click(function(){
+		$("#toggle_menu").slideUp("slow");
+	});
+
+	// 토글 아코디언 메뉴
+
+	$("#accordion").accordion({
+		active: false,
+		collapsible: true,
+	});
+	
+	$(".toggle_menu dt.nav").click(function(){
+		$(".toggle_menu dt.nav").css("background", "none");
+		$(".toggle_menu dt.nav").find("img").attr("src", "img/menu_arrow.png");
+		$(this).css("background", "#ffcb05");
+		$(this).find("img").attr("src", "img/menu_arrow_on.png");
+	});
+
+	// 1011화면 메인 메뉴 슬라이드 효과
+	var oldImgId = "";
+	$(".menu ul li").hover(function(){
+
+		$("#"+oldImgId).find("img").attr("src", "img/"+oldImgId+".gif");
+		var imgId = $(this).attr("id");
+		$(this).find("img").attr("src", "img/"+imgId+"_on.gif");
+		
+		$(".menu").parent().find("#inner_menu").slideDown("normal").show();
+
+		oldImgId=imgId;
+
+		// 슬라이드 업 명령, 슬라이드 다운과 동시진행이 되지 않도록 내부적으로 선언
+		$(".menu").parent().hover(
+			function(){},
+			function(){
+				$(this).parent().find("#inner_menu").slideUp("fast");
+		});
+
+	}, function(){});
+
+	/* 이미지 사이즈의 height값을 동적으로 추출 */
+	var img=$("#container li.banner img").resize();
+	var hi=img.height();
+	$("#main_contents .main_ban").css("height", hi);
+
+	$(window).on("resize", function(e) { 
+		var imgHeight = $("#container li.banner img").height(); 
+		$("#main_contents .main_ban").css("height", imgHeight);
+	});
+
+	/* 메인배너 Fade효과 */
+	$("#container img").hide();
+	$("#container img:first").show();
+	$("#0").css("background","#ffcb05");
+
+	var oldIndex = 1;					//hide 이미지를 관리 
+	var newIndex;						//show 이미지를 관리
+	var imgs = $("#container img");
+
+	$(".btn_cl a").click(function(){
+		newIndex = $(this).attr("id"); 
+		
+		$(imgs[oldIndex]).fadeOut("slow");
+		$(imgs[newIndex]).fadeIn();
+		
+		$("#0").css("background","#ccc");
+		$("#"+oldIndex).css("background","#ccc");
+		$("#"+newIndex).css("background","#ffcb05");
+		oldIndex = newIndex;
+	});//end click
+
+	var btns = $(".btn_cl a");				
+	var btnsCount = $(btns).size();			
+	var btnIndex = 1;						
+
+	setInterval(function(){ 
+		if(btnsCount == btnIndex){ btnIndex = 0; }
+		$(btns[btnIndex]).trigger("click");
+		btnIndex += 1;						
+	}, 3000);	//end setInterval
+
+	/**** 후원정보 ****/
+	/* 화면 사이즈 측정을 위한 코드 start */
+	var display=$("#contents").resize();
+	var displayWi = display.width();
+/*
+	$(window).on("resize", function(e){ 
+		var displayWi2 = $("#contents").width(); 
+		if(displayWi2 >= 980){ stop(); }else{ auto(); }
+	});
+*/
+	/* 화면 사이즈 측정을 위한 코드 end */
+
+	var eleWidth = $('.banner_image ul li').width()*2;
+	var bannerAuto;
+	var isOn = false;
+	var direction = 'left';
+
+	//멈춤함수
+	function stop(){ clearInterval(bannerAuto); }
+	function auto(){
+		bannerAuto = setInterval( function(){
+			if(!isOn)
+			{
+				if(direction == 'left'){ $('#before').click(); }
+				else{ $('#next').click(); }
+			}
+		}, 3000);	//3초에 한번씩 실행
+	}	
+
+	// 오른쪽 버튼 움직임
+	function right(){
+		if(isOn)
+		{
+			direction = 'right';
+			$('.banner_image ul li:last').insertBefore($('.banner_image ul li:first'));
+			$('.banner_image ul li:last').insertBefore($('.banner_image ul li:first'));
+			$('.banner_image ul').css({left:eleWidth*-1});
+			$('.banner_image ul').stop().animate({left:0},500,'swing',function(){
+				$(this).css({left:0});
+				isOn = false;
+			});
+		}
+	}
+	// 왼쪽 버튼 움직임
+	function left(){
+		if(isOn)
+		{
+			direction = 'left';
+			$('.banner_image ul').stop().animate({left:eleWidth*-1},500,'swing',function(){
+				$(this).css({left:0});
+				$(this).children('li:first').insertAfter($(this).children('li:last'));
+				$(this).children('li:first').insertAfter($(this).children('li:last'));
+				isOn = false;
+			});	
+		}
+	}
+	//왼쪽버튼을 클릭했을때 이벤트 처리
+	$("#before").click(function(){
+		if(!isOn)
+		{	
+			isOn = true;
+			left();
+		}
+	});
+
+	//오른쪽버튼을 클릭했을때 이벤트 처리
+	$("#next").click(function(){
+		if(!isOn)
+		{	
+			isOn = true;
+			right();
+		}
+	});
+	
+	// 후원하기 배너 자동 실행
+	if(displayWi >= 980){ stop(); }else{ auto(); }
+});
+</script>
+    <script src="./js/jquery.bxslider.min.js"></script>
+    <script>
+        //mode:'horizontal', 'vertical', 'fade'
+			$(document).ready(function() {
+				$('.slideshow').bxSlider({
+					mode:"fade",//슬라이드 방향
+					auto:"true",//자동 실행됨
+					controls:"false",//prev,next버튼 노출여부
+					pager:"false",//현재 위치를 알려주는 블릿(아래 똥글이버튼)노출 여부
+					easing:"easeInOutElastic",//가속도
+					speed:500//실행시간
+				});
+			});
+</script>
+</head>
+
+<body>
+    <div id="warp">
+
+        <!-- 토글메뉴 -->
+        <div id="toggle_menu" class="toggle_menu">
+           <div id="toggle_close">
+                <h1>X</h1>
+            </div>
+            <dl id="accordion">
+                <!-- toggle_menu 1 -->
+                <dt class="nav">
+                    <a href="#">정보마당</a><img src="img/menu_arrow.png" alt="메뉴아이콘" />
+                </dt>
+                <dd class="nav_lv2">
+                    <ul>
+                        <li><a href="#">정보공개</a></li>
+                        <li><a href="#">교통단속현황</a></li>
+                        <li><a href="#">교통사고현황</a></li>
+                        <li><a href="#">범죄발생현황</a></li>
+                    </ul>
+                </dd>
+
+                <!-- toggle_menu 2 -->
+                <dt class="nav">
+                    <a href="#">민원창구</a><img src="img/menu_arrow.png" alt="메뉴아이콘" />
+                </dt>
+                <dd class="nav_lv2">
+                    <ul>
+                        <li><a href="#">민원안내</a></li>
+                        <li><a href="#">교통참여교육</a></li>
+                    </ul>
+                </dd>
+                <!-- toggle_menu 3 -->
+                <dt class="nav">
+                    <a href="#">참여마당</a><img src="img/menu_arrow.png" alt="메뉴아이콘" />
+                </dt>
+                <dd class="nav_lv2">
+                    <ul>
+                        <li><a href="#">자유게시판</a></li>
+                        <li><a href="#">응답순찰</a></li>
+                        <li><a href="#">모범경찰</a></li>
+                    </ul>
+                </dd>
+                <!-- toggle_menu 4 -->
+                <dt class="nav">
+                    <a href="#">소식마당</a><img src="img/menu_arrow.png" alt="메뉴아이콘" />
+                </dt>
+                <dd class="nav_lv2">
+                    <ul>
+                        <li><a href="#">공지사항</a></li>
+                        <li><a href="#">보도자료</a></li>
+                        <li><a href="#">주요집회</a></li>
+                    </ul>
+                </dd>
+                <!-- toggle_menu 5 -->
+                <dt class="nav">
+                    <a href="#">대덕경찰서</a><img src="img/menu_arrow.png" alt="메뉴아이콘" />
+                </dt>
+                <dd class="nav_lv2">
+                    <ul>
+                        <li><a href="#">청장인사말</a></li>
+                        <li><a href="#">대덕경찰안내</a></li>
+                        <li><a href="#">대덕경찰연혁</a></li>
+                    </ul>
+                </dd>
+            </dl><!-- end accordion -->
+            
+        </div><!-- end toggle_menu -->
+        <header>
+            <!-- myInfo layout -->
+            <div id="myInfo1011">
+                <div class="myInfo">
+                    <ul>
+                        <!--<li><a>HOME</a></li>
+					<li class="bar">|</li>-->
+                        <li><a>어린이경찰청</a></li>
+                        <li class="bar">|</li>
+                        <li><a>교통정보센터</a></li>
+                        <li class="bar">|</li>
+                        <li><a>경찰가족사랑방</a></li>
+                        <li class="bar">|</li>
+                        <li><a>사이트맵</a></li>
+                        <!--<li class="bar">|</li>-->
+                        <li class="search">
+                            <input type="text" id="" alt="검색창" />
+                            <input type="image" src="img/btn_search.gif" alt="검색 버튼" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- TOP layout -->
+            <div id="top">
+                <div class="top480">
+                    <div class="toggle" id="toggle">
+                        <img src="img/btn_menu.gif" />
+                    </div>
+                    <!-- 640~1010에서 출력 -->
+                    <!--<div id="myInfo_640">
+                        <a href="#">어린이경찰청</a>
+                        <a href="#">사이트맵</a>
+                    </div>-->
+
+                    <!--<div class="info">
+                        <img src="img/btn_open_s.gif" />
+                    </div>-->
+                </div>
+
+                <div class="top1011">
+                    <h1><a href="#">대전대덕경찰서</a></h1>
+                    <div class="menu">
+                        <ul>
+                            <li id="menu01"><a href="#">정보마당</a></li>
+                            <li id="menu02"><a href="#">민원창구</a></li>
+                            <li id="menu03"><a href="#">참여마당</a></li>
+                            <li id="menu04"><a href="#">소식마당</a></li>
+                            <li id="menu05"><a href="#">대덕경찰서</a></li>
+                            <li id="menu06"><a href="#">경찰민원포털</a></li>
+                        </ul>
+                    </div>
+                    <div id="inner_menu" class="inner_menu">
+                        <ul class="fl">
+                            <li><a href="#">정보공개</a></li>
+                            <li><a href="#">교통단속현황</a></li>
+                            <li><a href="#">교통사고현황</a></li>
+                            <li><a href="#">범죄발생현황</a></li>
+
+                        </ul>
+                        <ul class="fl">
+                            <li><a href="#">민원안내</a></li>
+                            <li><a href="#">민원양식</a></li>
+                            <li><a href="#">교통참여교육</a></li>
+
+                        </ul>
+                        <ul class="fl">
+                            <li><a href="#">자유게시판</a></li>
+                            <li><a href="#">응답순찰</a></li>
+                            <li><a href="#">모범경찰</a></li>
+                        </ul>
+                        <ul class="fl">
+                            <li><a href="#">공지사항</a></li>
+                            <li><a href="#">보도자료</a></li>
+                            <li><a href="#">주요집회</a></li>
+                        </ul>
+                        <ul class="fl">
+                            <li><a href="#">청장인사말</a></li>
+                            <li><a href="#">대덕경찰안내</a></li>
+                            <li><a href="#">대덕경찰연혁</a></li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 이벤트 배너: 후원신청 -->
+            <div id="ban_ev480">
+                <a href="#"></a>
+            </div>
+        </header>
+
+        <!-- contents layout -->
+        <div id="contents">
+            <section id="main_section" class="fl">
+
+                <section id="main_contents">
+                    <div class="main_ban">
+                        <!-- 배너 슬라이드 -->
+                        <div id="container">
+                            <ul>
+                                <li class="banner"><a href="#"><img src="img/ban_img_01.jpg" width="100%" /></a></li>
+                                <li class="banner"><a href="#"><img src="img/ban_img_02.jpg" width="100%" /></a></li>
+                                <li class="banner"><a href="#"><img src="img/ban_img_03.jpg" width="100%" /></a></li>
+                            </ul>
+                        </div>
+                        <div class="play_box">
+                            <div class="btn_con" id="pause"><input type="image" src="img/btn_pause.png" width="24px" /></div>
+                            <div class="btn_con" id="play" style="display: none;"><input type="image" src="img/btn_play.png" width="24px" /></div>
+                            <div class="btn_cl">
+                                <a href="#" id="0"></a>
+                                <a href="#" id="1"></a>
+                                <a href="#" id="2"></a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 메뉴: nav -->
+                    <div class="even_menu">
+                        <ul>
+                            <li class="manu fl">
+                                <a href="#">
+                                    <img src="./img/quick_menu1.png" alt="" class="tc_fl_img">
+                                    <span class="tc fl">민원관련 안내 </span>
+                                </a>
+                            </li>
+                            <li class="manu fl">
+                                <a href="#">
+                                    <img src="./img/quick_menu2.png" alt="" class="tc_fl_img">
+                                    <span class="tc fl">범칙금 /과태료 예약</span>
+                                </a>
+                            </li>
+                            <li class="manu fl">
+                                <a href="#">
+                                    <img src="./img/quick_menu3.png" alt="" class="tc_fl_img">
+                                    <span class="tc fl">내 사건 검색</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- main -->
+                    <div class="contentsBox">
+                        <div class="box fl">
+                            <div class="box_img">
+                                <a href=""><img src="img/board_img_01.jpg" alt="" width="100%" height="151px"></a>
+                            </div>
+                            <div class="blank"></div>
+                            <div class="box_text">
+                                <div class="title">
+                                    <a href="">
+                                        <h3><img src="./img/title.png" alt="">대덕 경찰은 지금</h3>
+                                    </a>
+                                    <input type="image" src="img/main_box_more.png">
+                                </div>
+                                <div class="text">
+                                    <img src="./img/now_img.jpg" alt="" class="now_img">
+                                    <h4>대덕서 관내 치안현장 방문<span>19.03</span></h4>
+
+                                    <p>대덕서 관내의 치안현장을 방문하였다 </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box fl">
+
+                            <div class="box_img">
+                                <div class="title">
+                                    <a href="">
+                                        <h3><img src="./img/title.png" alt="">대덕경찰 소개</h3>
+                                    </a>
+                                </div>
+                                <div class="intro_box">
+                                    <ul>
+                                        <li>
+                                            <a href=""><img src="./img/intro_1.png" onmouseover="this.src='./img/intro_1_hover.png'" onmouseout="this.src='./img/intro_1.png'" alt=""></a>
+                                        </li>
+                                        <li>
+                                            <a href=""><img src="./img/intro_2.png" onmouseover="this.src='./img/intro_2_hover.png'" onmouseout="this.src='./img/intro_2.png'" alt=""></a>
+                                        </li>
+                                        <li>
+                                            <a href=""><img src="./img/intro_3.png" onmouseover="this.src='./img/intro_3_hover.png'" onmouseout="this.src='./img/intro_3.png'" alt=""></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="blank"></div>
+                            <div class="box_text" id="border">
+                                <div class="title">
+                                    <a href="">
+                                        <h3><img src="./img/title.png" alt="">공지사항</h3>
+                                    </a>
+                                    <input type="image" src="img/main_box_more.png">
+                                </div>
+                                <div class="text2">
+                                    <div class="notice">
+                                        <h4>운전면허 행정처분 사전통지 공고<span>02/27</span></h4>
+                                        <p>운전면허 행정처분 정지 대상자가...</p>
+                                    </div>
+                                    <div class="notice">
+                                        <h4>번호판영치 반송통지 공고<span>02/25</span></h4>
+                                        <p>질서위반행위규제법 제55조 및...</p>
+                                    </div>
+                                    <div class="notice">
+                                        <h4>자주묻는 Q＆A TOP10<span>01/11</span></h4>
+                                        <p>Q1.[교통]무인단속카메라관련사항..</p>
+                                    </div>
+                                    <div class="notice1">
+                                        <h4>운전면허 행정처분 사전통지 공고<span>02/27</span></h4>
+                                        <p>운전면허 행정처분 정지 대상자가...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box fl">
+                            <div class="slideshow box_img" id="visual_img">
+                                <div class="image bg1"></div>
+                                <div class="image bg2"></div>
+                                <div class="image bg3"></div>
+
+                            </div>
+                            <!--slide-->
+<!--
+
+                            <img src="img/board_img_02.jpg" alt="" width="100%" height="151px">-->
+                        
+                        <div class="blank"></div>
+                        <div class="box_text" id="border">
+                            <div class="title">
+                                <a href="">
+                                    <h3><img src="./img/title.png" alt="">알림판</h3>
+                                </a>
+                                <!--<input type="image" src="img/main_box_more.png">-->
+                            </div>
+                            <div class="text3">
+                                <video src="./img/videoplayback.mp4" autoplay muted loop class="vod"></video>
+                                <h4>도로교통법 개정안내</h4>
+                                <p>달라진 도로 교통법! 꼭 확인하세요!</p>
+                                <h2>자세히보기</h2>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                
+        
+        </section>
+        
+
+        <!-- aside -->
+        <aside id="aside" class="fr">
+           <!-- <section id="amount_list_asi" class="fl">
+                <ul class="amount_list">
+                    <li><span class="title fl">후원국</span><span class="count fr">12</span></li>
+                    <li><span class="title fl">후원 수혜국</span><span class="count fr">26</span></li>
+                    <li><span class="title fl">올해 후원금액</span><span class="count fr">72,154,560,568</span></li>
+                </ul>
+            </section>-->
+
+            <div id="ban_ev1011"><a href="#">스마트</a></div>
+            <!-- 계좌 정보 -->
+            <div id="acountInfo">
+                <ul>
+                    <li class="li_1 fl"><a href="#">응답<span>순찰</span></a></li>
+                    <li class="li_2 fl"><a href="#">모범경찰추천</a></li>
+                    <li class="li_3 fl"><a href="#">
+                            <a href="#"><img src="./img/Untitled-1.png" alt=""></a>
+                        </a></li>
+                </ul>
+            </div>
+
+            <!-- 후원정보 -->
+            <div id="acountInfo_ban">
+                <!-- btn -->
+                <div id="before" class="btn fl"><input type="image" src="img/btn_before2.gif" name="" /></div>
+                <div id="next" class="btn fr"><input type="image" src="img/btn_next2.gif" name="" /></div>
+                <!-- img -->
+                <div id="sns_1011" class="sns">
+                    <ul>
+                        <li><a href="#"><img src="img/sns_face.png" alt="" /></a></li>
+                        <li><a href="#"><img src="img/sns_twi.png" alt="" /></a></li>
+                        <li><a href="#"><img src="img/sns_ins.png" alt="" /></a></li>
+                    </ul>
+                </div>
+            </div><!-- end acountInfo_ban -->
+
+
+
+        </aside>
+            </section>
+        </div>
+    </div>
+
+
+    <div id="spon">
+        <h3>관련사이트</h3>
+        <ul>
+            <li><a href="#"><img src="img/company1.gif" alt="" /></a></li>
+            <li><a href="#"><img src="img/company2.jpg" alt="" /></a></li>
+            <li><a href="#"><img src="img/company3.gif" alt="" /></a></li>
+            <li><a href="#"><img src="img/company4.gif" alt="" /></a></li>
+        </ul>
+        <div class="btn_spon">
+            <div><a href="#"><img src="img/btn_before.gif" alt="" /></a></div>
+            <div><a href="#"><img src="img/btn_next.gif" alt="" /></a></div>
+        </div>
+    </div>
+
+    <!-- footer layout -->
+    <footer id="footer">
+        <div id="sns_all" class="sns">
+            <ul>
+                <li><a href="#"><img src="img/sns_face.png" alt="" /></a></li>
+                <li><a href="#"><img src="img/sns_twi.png" alt="" /></a></li>
+                <li><a href="#"><img src="img/sns_ins.png" alt="" /></a></li>
+            </ul>
+        </div>
+
+        <div id="footer1011">
+            <div class="pri_policy">
+                <ul>
+                    <li><a href="#">저작권보호정책</a></li>
+                    <li class="bar">|</li>
+                    <li class="point_ora"><a href="#">개인정보 취급방침</a></li>
+                    <li class="bar">|</li>
+                    <li><a href="#"><input type="image" src="img/icon_rss.gif" alt="icon of rss"></a></li>
+                    <li class="bar">|</li>
+                    <li><a href="#">부서별연락처</a></li>
+                    <li class="bar">|</li>
+                    <li><a href="#">찾아오시는길</a></li>
+                </ul>
+            </div>
+            <div class="family_site">
+                <select>
+                    <option>지방청</option>
+                    <option>서울지방경찰청</option>
+                    <option>대전지방경찰청</option>
+                </select>
+                <input type="image" name="" id="" src="img/btn_go.gif" alt="go버튼" />
+            </div>
+        </div>
+        <div class="add">
+            <address><strong>대전 대덕 경찰서</strong><br><strong>주소</strong> [34301] 대전광역시 대덕구 대덕대로 1417번길 11 / 경찰민원 콜센터 : 182<span>|</span><strong>대표자</strong>박영희
+            <br>COPYRIGHTⓒ 2019 Daejeon DaeDeok Police Station. ALL RIGHRS RESERVED.
+            </address>
+        </div>
+    </footer>
+    </div>
+    </div>
+
+</body>
+
+</html>
